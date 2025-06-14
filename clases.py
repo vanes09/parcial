@@ -12,7 +12,7 @@ import numpy as np
 
 #creo la clase dicom para manejar los archivos DICOM
 class Dicom:
-    def __init__(self, archivo, DS, Imagen):
+    def __init__(self, archivo, DS=None, Imagen=None):
         self.archivo = archivo
         self.DS = DS
         self.Imagen = Imagen 
@@ -41,7 +41,17 @@ class Dicom:
         plt.show()
 
     def reconstruccion_3d(self):
-        pass
+        self.leer()
+        self.dicoms = []
+        imagenes = []
+        lista = sorted(os.listdir(self.archivo))
+        for archivo in lista:
+            ruta = os.path.join(self.archivo, archivo)
+            archivos_dicom = pydicom.dcmread(ruta)
+            self.dicoms.append(archivos_dicom)
+            imagenes.append(archivos_dicom.pixel_array)
+        self.volumen = np.array(imagenes)
+        return self.volumen
 
     def datos_pac(self):
         if self.DS is None:
@@ -96,14 +106,18 @@ class manejo_imagencv:
         plt.axis('off')
         plt.show()
 
-    def binarizar_imagen(self, umbral=127, tipo_bin=cv2.THRESH_BINARY):
+    def binarizar_imagen(self, umbral=127, tipo_bin=cv2.THRESH_BINARY, dibujarfig = 'circulo'):
         self.cargar_imagen()
         img = self.imagen
         imgB = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         umbral, imgBin = cv2.threshold(imgB, umbral, 255, tipo_bin)
         copiaimgBin = imgBin.copy()
-        ImgBdibuj = cv2.circle(copiaimgBin,(255,255), 100, (0,0,255), 3)
-        ImgBdibujycontext = cv2.putText(ImgBdibuj,f'Imagen binarizada\nUmbral: {umbral}',(255,255), cv2.FONT_HERSHEY_SIMPLEX, 3,(255,255,0),2,cv2.LINE_AA)
+        if dibujarfig == 'circulo':
+            ImgBdibuj = cv2.circle(copiaimgBin,(255,255), 100, (0,0,255), 3)
+            ImgBdibujycontext = cv2.putText(ImgBdibuj,f'Imagen binarizada\nUmbral: {umbral}',(255,255), cv2.FONT_HERSHEY_SIMPLEX, 3,(255,255,0),2,cv2.LINE_AA)
+        else:
+            ImgBdibuj =  cv2.rectangle(copiaimgBin,(300,500),(210,360),(255,0,0), 3)
+            ImgBdibujycontext = cv2.putText(ImgBdibuj,f'Imagen binarizada\nUmbral: {umbral}',(250,250), cv2.FONT_HERSHEY_SIMPLEX, 3,(255,255,0),2,cv2.LINE_AA)
         plt.imshow(ImgBdibujycontext, cmap='gray')
         plt.axis('off')
         plt.show()
@@ -118,7 +132,6 @@ class manejo_imagencv:
         plt.imshow(TM, cmap='gray')
         plt.axis('off')
         plt.show()
-
 
     def guardar_imagen(self, ruta):
         cv2.imwrite(ruta, self.imagen)
