@@ -6,7 +6,7 @@ from pydicom.data import get_testdata_file
 from pydicom import dcmread
 import dicom2nifti
 import matplotlib.pyplot as plt
-from nilearn import plotting, image 
+from nilearn import plotting 
 import numpy as np
 
 
@@ -86,13 +86,17 @@ class Dicom:
 
 #Clase paciente, no se crearon los tributos solicitados, porque existe un método dentro de la clase Dicon que extrae los datos que se piden
 class Paciente:
-    def __init__(self, archivo_dicom):
+    def __init__(self, archivo_dicom, nombre, edad, ID):
+        self.nombre = nombre
+        self.edad = edad
+        self.ID = ID
         self.dicom= Dicom(archivo_dicom)
 
     def mostrar_datos(self):
         self.dicom.datos_pac()
 
     def guardar_pac(self, ruta_guardar, nombre, edad, ID):
+        self.dicom.leer()
         if nombre:
             self.dicom.DS.PatientName = nombre
         if edad:
@@ -100,7 +104,7 @@ class Paciente:
         if ID:  
             self.dicom.DS.PatientID = ID
         self.dicom.DS.save_as(ruta_guardar)
-        
+
         print("Paciente guardado con éxito")
     
     #def mostrar_imagen(self):

@@ -34,12 +34,24 @@ while True:
             break
     
     elif menu.lower() == 'b':
+            ruta = input("Ruta del archivo DICOM (.dcm): ")
             nombre_paciente = input("Nombre del paciente: ")
             edad = input("Edad del paciente: ")
-            genero = input("Género del paciente: ")
-            paciente = Paciente(nombre_paciente, edad, genero)
+            ID = input("ID del paciente: ")
+            paciente = Paciente(ruta,nombre_paciente, edad, ID)
             pacientes[nombre_paciente] = paciente
-            print('Paciente ingresado:', nombre_paciente)
+            dicom = Dicom(ruta)
+            nombre = os.path.basename(ruta)
+            archivos_dicom[nombre] = dicom
+            paciente.guardar_pac(ruta, nombre_paciente, edad, ID)
+            print('El archivo dicom usado fue guardado en el diccionario con éxito')
+            print('Paciente guardado en el diccionario con éxito' )
+            break
+    
+    elif menu.lower() == 'c':
+          
+    
+
 
     
 
