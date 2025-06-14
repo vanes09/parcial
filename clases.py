@@ -1,6 +1,7 @@
 #importo las librerias necesarias
 import pydicom
 import os
+import cv2
 from pydicom.data import get_testdata_file
 from pydicom import dcmread
 import dicom2nifti
@@ -56,17 +57,46 @@ class Dicom:
             except KeyError:
                 print("No se encontró al paciente en el archivo.")
 
+    def transformacion_de_traslación(self, dx=210, dy=210):
+        self.extraer_imagen()
+        img = self.Imagen
+        plt.figure(figsize=(10, 10))
+        plt.subplot(1, 2, 1)
+        plt.imshow(img, cmap='gray')
+        plt.title('Imagen Original')
+        MT =  np.float32([[1,0,dx],[0,1,dy]])
+        tras = cv2.warpAffine(img, MT, (img.shape[1], img.shape[0]))
+        plt.subplot(1, 2, 2)
+        plt.title('Imagen Transformada')
+        plt.imshow(tras, cmap='gray')
 
     def guardar_datos(self, ruta):
         pass
 
-    class Paciente:
-        def __init__(self, archivo_dicom):
-            self.dicom= Dicom(archivo_dicom)
 
-        def mostrar_datos(self):
-            self.dicom.datos_pac()
-        
-        def mostrar_imagen(self):
-            self.dicom.reconstruccion_3d()
+#Clase paciente, no se crearon los tributos solicitados, porque existe un método dentro de la clase Dicon que extrae los datos que se piden
+class Paciente:
+    def __init__(self, archivo_dicom):
+        self.dicom= Dicom(archivo_dicom)
 
+    def mostrar_datos(self):
+        self.dicom.datos_pac()
+    
+    #def mostrar_imagen(self):
+        #self.dicom.reconstruccion_3d()
+
+class manejo_imagencv:
+    def __init__(self, imagen):
+        self.imagen = imagen
+
+    def cargar_imagen(self):
+        img = cv2.imread(os.getcwd() + '/'+ self.imagen)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        plt.imshow(img)
+        plt.axis('off')
+        plt.show()
+
+    def binarizar_imagen(self, umbral=127):
+
+    def guardar_imagen(self, ruta):
+        cv2.imwrite(ruta, self.imagen)
