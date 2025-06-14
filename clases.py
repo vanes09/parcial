@@ -91,11 +91,22 @@ class Paciente:
 
     def mostrar_datos(self):
         self.dicom.datos_pac()
+
+    def guardar_pac(self, ruta_guardar, nombre, edad, ID):
+        if nombre:
+            self.dicom.DS.PatientName = nombre
+        if edad:
+            self.dicom.DS.PatientAge = edad
+        if ID:  
+            self.dicom.DS.PatientID = ID
+        self.dicom.DS.save_as(ruta_guardar)
+        
+        print("Paciente guardado con éxito")
     
     #def mostrar_imagen(self):
         #self.dicom.reconstruccion_3d()
 
-class manejo_imagencv:
+class Manejo_imagencv:
     def __init__(self, imagen):
         self.imagen = imagen
 
