@@ -90,13 +90,35 @@ class manejo_imagencv:
         self.imagen = imagen
 
     def cargar_imagen(self):
-        img = cv2.imread(os.getcwd() + '/'+ self.imagen)
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        plt.imshow(img)
+        self.imagen = cv2.imread(os.getcwd() + '/'+ self.imagen)
+        self.imagen = cv2.cvtColor(self.imagen, cv2.COLOR_BGR2RGB)
+        plt.imshow(self.imagen)
         plt.axis('off')
         plt.show()
 
-    def binarizar_imagen(self, umbral=127):
+    def binarizar_imagen(self, umbral=127, tipo_bin=cv2.THRESH_BINARY):
+        self.cargar_imagen()
+        img = self.imagen
+        imgB = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        umbral, imgBin = cv2.threshold(imgB, umbral, 255, tipo_bin)
+        copiaimgBin = imgBin.copy()
+        ImgBdibuj = cv2.circle(copiaimgBin,(255,255), 100, (0,0,255), 3)
+        ImgBdibujycontext = cv2.putText(ImgBdibuj,f'Imagen binarizada\nUmbral: {umbral}',(255,255), cv2.FONT_HERSHEY_SIMPLEX, 3,(255,255,0),2,cv2.LINE_AA)
+        plt.imshow(ImgBdibujycontext, cmap='gray')
+        plt.axis('off')
+        plt.show()
+
+    def transformacion_morfologica(self, tamaño_kernel= (5,5), umbral = 127, tipo_bin=cv2.THRESH_BINARY, TransMorf = cv2.erode):
+        self.cargar_imagen()
+        img = self.imagen
+        imgB = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        umbral, imgBin = cv2.threshold(imgB, umbral, 255, tipo_bin)
+        kernel = np.ones(tamaño_kernel, np.uint8)
+        TM = TransMorf(imgBin, kernel)
+        plt.imshow(TM, cmap='gray')
+        plt.axis('off')
+        plt.show()
+
 
     def guardar_imagen(self, ruta):
         cv2.imwrite(ruta, self.imagen)
